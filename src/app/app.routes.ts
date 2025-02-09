@@ -1,24 +1,40 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './modules/home/home.component';
-import { LoginComponent } from './modules/auth/login/login.component';
-import { RegisterComponent } from './modules/auth/register/register.component';
+import { AuthGuard } from './core/guards/auth.guard';
+import { NoAuthGuard } from './core/guards/no-auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
-    pathMatch: 'full',
+    redirectTo: 'dashboard',
+    pathMatch: 'full'
   },
   {
-    path: 'login',
-    component: LoginComponent,
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule),
+    canActivate: [NoAuthGuard]
   },
   {
-    path: 'register',
-    component: RegisterComponent,
+    path: 'dashboard',
+    loadChildren: () => import('./features/dashboard/dashboard.module').then(m => m.DashboardModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'profile',
+    loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'collection',
+    loadChildren: () => import('./features/collection/collection.module').then(m => m.CollectionModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'points',
+    loadChildren: () => import('./features/points/points.module').then(m => m.PointsModule),
+    canActivate: [AuthGuard]
   },
   {
     path: '**',
-    redirectTo: '',
-  },
+    redirectTo: ''
+  }
 ];

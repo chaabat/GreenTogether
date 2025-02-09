@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, of, throwError } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { REWARD_TIERS } from '../model/collection.model';
+import {  REWARD_TIERS } from '../models/collection.model';
 
 export interface RewardVoucher {
   id: string;
@@ -14,12 +15,15 @@ export interface RewardVoucher {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class PointsService {
   private readonly VOUCHERS_KEY = 'vouchers';
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private snackBar: MatSnackBar
+  ) {
     this.initializeVouchers();
   }
 
@@ -44,9 +48,7 @@ export class PointsService {
       return throwError(() => new Error('No user logged in'));
     }
 
-    const vouchers = this.getVouchers().filter(
-      (v) => v.userId === currentUser.id
-    );
+    const vouchers = this.getVouchers().filter(v => v.userId === currentUser.id);
     return of(vouchers);
   }
 
@@ -60,7 +62,7 @@ export class PointsService {
       return throwError(() => new Error('Insufficient points'));
     }
 
-    const tier = REWARD_TIERS.find((t) => t.points === points);
+    const tier = REWARD_TIERS.find(t => t.points === points);
     if (!tier) {
       return throwError(() => new Error('Invalid points amount'));
     }
@@ -68,30 +70,32 @@ export class PointsService {
     const updatedPoints = currentUser.points - points;
 
     // First update the user's points
-    return this.authService
-      .updateUser({
-        ...currentUser,
-        points: updatedPoints,
+    return this.authService.updateUser(currentUser.id, {
+      points: updatedPoints
+    }).pipe(
+      switchMap(() => {
+        const voucher: RewardVoucher = {
+          id: Date.now().toString(),
+          userId: currentUser.id,
+          points: points,
+          value: tier.value,
+          createdAt: new Date().toISOString(),
+          code: this.generateVoucherCode()
+        };
+
+        const vouchers = this.getVouchers();
+        vouchers.push(voucher);
+        this.saveVouchers(vouchers);
+
+        this.snackBar.open(
+          `Successfully redeemed ${points} points for a ${tier.value} Dh voucher!`,
+          'Close',
+          { duration: 5000 }
+        );
+
+        return of(voucher);
       })
-      .pipe(
-        switchMap(() => {
-          const voucher: RewardVoucher = {
-            id: Date.now().toString(),
-            userId: currentUser.id,
-            points: points,
-            value: tier.value,
-            createdAt: new Date().toISOString(),
-            code: this.generateVoucherCode(),
-          };
-
-          const vouchers = this.getVouchers();
-          vouchers.push(voucher);
-          this.saveVouchers(vouchers);
-
-          // Instead of using MatSnackBar, we'll let the component handle the success message
-          return of(voucher);
-        })
-      );
+    );
   }
 
   private generateVoucherCode(): string {
@@ -102,4 +106,4 @@ export class PointsService {
     }
     return code;
   }
-}
+} 

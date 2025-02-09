@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { CollectionRequest } from '../model/collection.model'; 
+import { CollectionRequest } from '../models/collection.model';
 import { CollectionService } from '../services/collection.service';
-
 
 @Injectable({
   providedIn: 'root'

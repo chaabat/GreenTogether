@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { CollectionRequest, RequestStatus, POINTS_CONFIG, COLLECTION_CONSTRAINTS } from '../model/collection.model';
+import { CollectionRequest, RequestStatus, POINTS_CONFIG, COLLECTION_CONSTRAINTS } from '../models/collection.model';
 import { AuthService } from './auth.service';
 import { map } from 'rxjs/operators';
-
 
 @Injectable({
   providedIn: 'root'

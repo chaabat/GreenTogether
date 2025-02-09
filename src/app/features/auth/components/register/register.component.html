@@ -1,0 +1,220 @@
+<div
+  class="h-screen font-sans login bg-cover bg-center bg-no-repeat"
+  style="
+    background-image: url('https://res.cloudinary.com/dlwyetxjd/image/upload/v1738924469/u7oecs1gveqrlbfyzfgm.jpg');
+  "
+>
+  <div class="container mx-auto h-full flex flex-1 justify-center items-center">
+    <div class="w-full max-w-4xl">
+      <div class="leading-loose">
+        <form
+          [formGroup]="registerForm"
+          (ngSubmit)="onSubmit()"
+          class="w-full m-4 p-10 bg-black/40 backdrop-blur-sm rounded-lg shadow-xl"
+        >
+          <p class="text-white font-mono text-center text-2xl font-bold mb-6">
+            REGISTER
+          </p>
+
+          <!-- First Name & Last Name -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm text-white font-mono"
+                >First Name</label
+              >
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="text"
+                formControlName="firstName"
+                placeholder="John"
+                required
+              />
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="
+                  registerForm.get('firstName')?.hasError('required') &&
+                  registerForm.get('firstName')?.touched
+                "
+              >
+                First name is required
+              </span>
+            </div>
+            <div>
+              <label class="block text-sm text-white font-mono"
+                >Last Name</label
+              >
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="text"
+                formControlName="lastName"
+                placeholder="Doe"
+                required
+              />
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="
+                  registerForm.get('lastName')?.hasError('required') &&
+                  registerForm.get('lastName')?.touched
+                "
+              >
+                Last name is required
+              </span>
+            </div>
+          </div>
+
+          <!-- Email & Password -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm text-white font-mono">Email</label>
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="email"
+                formControlName="email"
+                placeholder="john@example.com"
+                required
+              />
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="
+                  registerForm.get('email')?.hasError('required') &&
+                  registerForm.get('email')?.touched
+                "
+              >
+                Email is required
+              </span>
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="
+                  registerForm.get('email')?.hasError('email') &&
+                  registerForm.get('email')?.touched
+                "
+              >
+                Please enter a valid email
+              </span>
+            </div>
+            <div>
+              <label class="block text-sm text-white font-mono">Password</label>
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="password"
+                formControlName="password"
+                placeholder="••••••••"
+                required
+              />
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="
+                  registerForm.get('password')?.hasError('required') &&
+                  registerForm.get('password')?.touched
+                "
+              >
+                Password is required
+              </span>
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="
+                  registerForm.get('password')?.hasError('minlength') &&
+                  registerForm.get('password')?.touched
+                "
+              >
+                Password must be at least 6 characters
+              </span>
+            </div>
+          </div>
+
+          <!-- Phone & Birth Date -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm text-white font-mono"
+                >Phone Number</label
+              >
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="tel"
+                formControlName="phoneNumber"
+                placeholder="0612345678"
+                required
+              />
+              <span
+                class="text-red-400 text-xs"
+                *ngIf="isFieldInvalid('phoneNumber')"
+              >
+                {{ getErrorMessage("phoneNumber") }}
+              </span>
+            </div>
+            <div>
+              <label class="block text-sm text-white font-mono"
+                >Birth Date</label
+              >
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="date"
+                formControlName="dateOfBirth"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- Address & Profile Picture -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm text-white font-mono">Address</label>
+              <input
+                class="w-full px-5 py-2 text-gray-700 bg-gray-200/90 rounded-lg focus:outline-none focus:bg-white transition-colors duration-200"
+                type="text"
+                formControlName="address"
+                placeholder="Your address"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm text-white font-mono"
+                >Profile Picture</label
+              >
+              <input
+                class="w-full px-5 py-2 text-white/90 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-green-600 file:text-white hover:file:bg-green-700"
+                type="file"
+                (change)="onFileSelected($event)"
+                accept="image/*"
+              />
+            </div>
+          </div>
+
+          <div
+            *ngIf="error$ | async as error"
+            class="text-red-400 text-sm mb-4 text-center"
+          >
+            {{ error }}
+          </div>
+
+          <div class="mt-6 flex flex-col gap-4">
+            <button
+              class="w-full px-4 py-2 text-white font-mono tracking-wider bg-green-600 hover:bg-green-700 rounded-lg transition-colors duration-200 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+              type="submit"
+              [disabled]="registerForm.invalid || (loading$ | async)"
+            >
+              <mat-spinner
+                *ngIf="loading$ | async"
+                diameter="20"
+                class="mr-2"
+                [style.--mdc-circular-progress-active-indicator-color]="'white'"
+              ></mat-spinner>
+              <span>{{
+                (loading$ | async) ? "Creating Account..." : "Create Account"
+              }}</span>
+            </button>
+
+            <div class="text-center text-white font-mono">
+              <a
+                routerLink="/auth/login"
+                class="text-sm hover:text-green-400 transition-colors duration-200"
+              >
+                Already have an account? Sign in
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

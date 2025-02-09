@@ -1,0 +1,124 @@
+<header
+  class="sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-gray-200"
+>
+  <div class="container mx-auto px-4">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="flex items-center gap-3">
+        <a routerLink="/" class="flex items-center gap-3 hover:opacity-90">
+          <img
+            src="https://res.cloudinary.com/dlwyetxjd/image/upload/v1738660430/yifljpmi4pg3mstvvfoy.png"
+            alt="GreenTogether Logo"
+            class="h-8 w-8 object-contain"
+          />
+
+          <span
+            class="text-2xl font-semibold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent"
+          >
+            GreenTogether
+          </span>
+        </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="hidden lg:flex items-center gap-6">
+        <div class="h-8 w-px bg-gray-200"></div>
+
+        <div class="flex items-center gap-4" *ngIf="user$ | async as user">
+          <!-- Navigation Links -->
+          <button
+            mat-button
+            class="text-gray-700 hover:text-green-600"
+            (click)="navigateToDashboard()"
+          >
+            <mat-icon class="mr-2">dashboard</mat-icon>
+            Dashboard
+          </button>
+          <button
+            mat-button
+            class="text-gray-700 hover:text-green-600"
+            (click)="navigateToRequests()"
+          >
+            <mat-icon class="mr-2">list_alt</mat-icon>
+            {{
+              user.role === "collector" ? "Available Requests" : "My Requests"
+            }}
+          </button>
+          <button
+            *ngIf="user.role === 'collector'"
+            mat-button
+            class="text-gray-700 hover:text-green-600"
+            (click)="navigateToMyCollections()"
+          >
+            <mat-icon class="mr-2">assignment_turned_in</mat-icon>
+            My Collections
+          </button>
+          <button
+            *ngIf="user.role === 'individual'"
+            mat-button
+            class="text-gray-700 hover:text-green-600"
+            (click)="navigateToPoints()"
+          >
+            <mat-icon class="mr-2">stars</mat-icon>
+            My Points
+          </button>
+
+          <button
+            [matMenuTriggerFor]="profileMenu"
+            class="flex items-center gap-3 hover:bg-gray-50 rounded-lg p-2 transition-all focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          >
+            <div
+              class="h-10 w-10 rounded-full bg-green-100 grid place-items-center"
+            >
+              <img
+                [src]="user.photoUrl || 'assets/default-avatar.png'"
+                alt="User Avatar"
+                class="h-10 w-10 rounded-full"
+              />
+            </div>
+            <div class="flex flex-col items-start">
+              <span class="text-sm font-medium text-gray-900">
+                {{ user.firstName }} {{ user.lastName }}
+              </span>
+              <span class="text-xs text-gray-500 capitalize">{{
+                user.role
+              }}</span>
+            </div>
+          </button>
+
+          <mat-menu #profileMenu="matMenu">
+            <div class="py-1">
+              <button mat-menu-item (click)="navigateToProfile()">
+                <mat-icon>account_circle</mat-icon>
+                <span>Profile</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="logout()" class="text-red-600">
+                <mat-icon>logout</mat-icon>
+                <span>Logout</span>
+              </button>
+            </div>
+          </mat-menu>
+        </div>
+
+        <!-- Auth Links -->
+        <div class="flex items-center gap-4" *ngIf="!(user$ | async)">
+          <button
+            mat-button
+            class="text-gray-700 hover:text-green-600"
+            (click)="navigateToLogin()"
+          >
+            Login
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="navigateToRegister()"
+          >
+            Register
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
